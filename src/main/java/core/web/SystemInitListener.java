@@ -70,7 +70,8 @@ public class SystemInitListener implements ServletContextListener {
         String s = entityName.substring(0, 1).toLowerCase()
                 + entityName.substring(1) + "ServiceImpl";
         Service service = (Service) applicationContext.getBean(s);
-        Object entity = (ExtJSBaseParameter) service.get(key);
+        Object entity = (ExtJSBaseParameter) service.get(
+                ExtJSBaseParameter.class, key);
         request.setAttribute(entityName + "_" + key, entity);
         try {
             return PropertyUtils.getProperty(entity, propName);

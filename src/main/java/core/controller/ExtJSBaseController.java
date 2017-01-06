@@ -37,7 +37,7 @@ public abstract class ExtJSBaseController<E extends ExtJSBaseParameter> {
     protected String idField;
     protected String statusField;
     protected static final String separator = "/";
-    protected Service<E> service;
+    protected Service service;
     protected static ObjectMapper mapper = new ObjectMapper();
     protected static JsonFactory factory = mapper.getJsonFactory();
 
@@ -48,8 +48,10 @@ public abstract class ExtJSBaseController<E extends ExtJSBaseParameter> {
             HttpServletResponse response) throws IOException {
         beforeList(entity);
         BaseParameter parameter = entity;
-        QueryResult<E> qr = this.service.doPaginationQuery(parameter);
-        ListView<E> clv = new ListView<E>();
+        QueryResult<ExtJSBaseParameter> qr = this.service.doPaginationQuery(
+                ExtJSBaseParameter.class,
+                parameter);
+        ListView<ExtJSBaseParameter> clv = new ListView<ExtJSBaseParameter>();
         clv.setData(qr.getResultList());
 
         writeJSON(response, clv);
@@ -87,7 +89,8 @@ public abstract class ExtJSBaseController<E extends ExtJSBaseParameter> {
     public void doDelete(HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam("ids") Serializable[] ids) throws IOException {
-        this.service.updateByProperties(this.idField, ids,
+        this.service.updateByProperties(ExtJSBaseParameter.class, this.idField,
+                ids,
                 new String[] { this.statusField },
                 new Object[] { Integer.valueOf(-1) });
         writeJSON(response, "{success:true}");

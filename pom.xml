@@ -8,10 +8,10 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>ssh-runner</artifactId>
+	<artifactId>ssh-original</artifactId>
 	<packaging>war</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>ssh-shell Maven Webapp</name>
+	<name>ssh-original Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	
 	<properties>
@@ -24,9 +24,9 @@
 			<properties>
 				<package.environment>local</package.environment>
 				<mvn.show_sql>false</mvn.show_sql>
-				<jdbc.url>jdbc:mysql://localhost:3306/sys?useUnicode=true&amp;amp;characterEncoding=UTF-8</jdbc.url>
+				<jdbc.url>jdbc:mysql://localhost:3306/test?useUnicode=true&amp;amp;characterEncoding=UTF-8</jdbc.url>
 				<jdbc.user>root</jdbc.user>
-				<jdbc.password>zlg_mac_20151224</jdbc.password>
+				<jdbc.password></jdbc.password>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -404,7 +404,7 @@
 					<configuration>
 						<contextXml>src/main/resources/jetty-contexts.xml</contextXml>
 						<webApp>
-							<contextPath>/ssh-runner</contextPath>
+							<contextPath>/ssh-original</contextPath>
 							<defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>
 							<baseResource
 								implementation="org.eclipse.jetty.util.resource.ResourceCollection">

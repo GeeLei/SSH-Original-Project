@@ -29,9 +29,10 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.transform.Transformers;
 
+import cn.zlg.util.New;
+
 import com.huanke.sshshell.bean.Pager;
 
-import cn.zlg.util.New;
 import core.support.BaseParameter;
 import core.support.QueryResult;
 
@@ -39,11 +40,12 @@ import core.support.QueryResult;
  * 类名称：BaseDaoPhysic，物理删除basedao 类描述： 创建人： 吴瑜 创建时间：2015年5月2日 下午4:33:02 修改人：
  * 修改时间：2015年5月2日 下午4:33:02 修改备注：
  */
-public class BaseDaoPhysic<E> implements Dao<E> {
+public class BaseDaoPhysic implements Dao {
     protected final Logger log = Logger.getLogger(BaseDaoPhysic.class);
     private static Map<String, Method> MAP_METHOD = new HashMap<String, Method>();
     private SessionFactory sessionFactory;
-    protected Class<E> entityClass;
+
+    // protected Class<E> entityClass;
 
     public SessionFactory getSessionFactory() {
         return this.sessionFactory;
@@ -62,19 +64,19 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         setSessionFactory(sessionFactory);
     }
 
-    public BaseDaoPhysic(Class<E> entityClass) {
-        this.entityClass = entityClass;
-    }
+    // public BaseDaoPhysic(Class<E> entityClass) {
+    // this.entityClass = entityClass;
+    // }
 
-    public Serializable persist(E entity) {
+    public <E> Serializable persist(E entity) {
         return getSession().save(entity);
     }
 
-    public boolean deleteByPK(Serializable... id) {
+    public <E> boolean deleteByPK(Class<E> entityClass, Serializable... id) {
         boolean result = false;
         if ((id != null) && (id.length > 0)) {
             for (int i = 0; i < id.length; i++) {
-                E entity = get(id[i]);
+                E entity = get(entityClass, id[i]);
                 if (entity != null) {
                     getSession().delete(entity);
                     result = true;
@@ -84,12 +86,13 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         return result;
     }
 
-    public void deleteByProperties(String[] propName, Object[] propValue) {
+    public <E> void deleteByProperties(Class<E> entityClass, String[] propName,
+            Object[] propValue) {
         if ((propName != null) && (propName.length > 0) && (propValue != null)
                 && (propValue.length > 0)
                 && (propValue.length == propName.length)) {
             StringBuffer sb = new StringBuffer("delete from "
-                    + this.entityClass.getName() + " o where 1=1 ");
+                    + entityClass.getName() + " o where 1=1 ");
             appendQL(sb, propName, propValue);
             Query query = getSession().createQuery(sb.toString());
             setParameter(query, propName, propValue);
@@ -97,16 +100,18 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         }
     }
 
-    public void delete(E entity) {
+    public <E> void delete(E entity) {
         getSession().delete(entity);
     }
 
-    public void deleteByProperties(String propName, Object propValue) {
-        deleteByProperties(new String[] { propName },
+    public <E> void deleteByProperties(Class<E> entityClass, String propName,
+            Object propValue) {
+        deleteByProperties(entityClass, new String[] { propName },
                 new Object[] { propValue });
     }
 
-    public void updateByProperties(String[] conditionName,
+    public <E> void updateByProperties(Class<E> entityClass,
+            String[] conditionName,
             Object[] conditionValue, String[] propertyName,
             Object[] propertyValue) {
         if ((propertyName != null) && (propertyName.length > 0)
@@ -114,7 +119,7 @@ public class BaseDaoPhysic<E> implements Dao<E> {
                 && (propertyName.length == propertyValue.length)
                 && (conditionValue != null) && (conditionValue.length > 0)) {
             StringBuffer sb = new StringBuffer();
-            sb.append("update " + this.entityClass.getName() + " o set ");
+            sb.append("update " + entityClass.getName() + " o set ");
             for (int i = 0; i < propertyName.length; i++) {
                 sb.append(propertyName[i] + " = :p_" + propertyName[i] + ",");
             }
@@ -133,52 +138,56 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         }
     }
 
-    public void updateByProperties(String[] conditionName,
+    public <E> void updateByProperties(Class<E> entityClass,
+            String[] conditionName,
             Object[] conditionValue, String propertyName, Object propertyValue) {
-        updateByProperties(conditionName, conditionValue,
+        updateByProperties(entityClass, conditionName, conditionValue,
                 new String[] { propertyName }, new Object[] { propertyValue });
     }
 
-    public void updateByProperties(String conditionName, Object conditionValue,
+    public <E> void updateByProperties(Class<E> entityClass,
+            String conditionName, Object conditionValue,
             String[] propertyName, Object[] propertyValue) {
-        updateByProperties(new String[] { conditionName },
+        updateByProperties(entityClass, new String[] { conditionName },
                 new Object[] { conditionValue }, propertyName, propertyValue);
     }
 
-    public void updateByProperties(String conditionName, Object conditionValue,
+    public <E> void updateByProperties(Class<E> entityClass,
+            String conditionName, Object conditionValue,
             String propertyName, Object propertyValue) {
-        updateByProperties(new String[] { conditionName },
+        updateByProperties(entityClass, new String[] { conditionName },
                 new Object[] { conditionValue }, new String[] { propertyName },
                 new Object[] { propertyValue });
     }
 
-    public void update(E entity) {
+    public <E> void update(E entity) {
         Session s = getSession();// 解决opensessioninview的delete和update权限，by 邹猛
         s.setFlushMode(FlushMode.AUTO);
         s.update(entity);
         s.flush();
     }
 
-    public void update(E entity, Serializable oldId) {
-        deleteByPK(new Serializable[] { oldId });
+    public <E> void update(E entity, Serializable oldId) {
+        deleteByPK(entity.getClass(), new Serializable[] { oldId });
         persist(entity);
     }
 
     @SuppressWarnings("unchecked")
-    public E merge(E entity) {
+    public <E> E merge(E entity) {
         E merge = (E) getSession().merge(entity);
         return merge;
     }
 
     @SuppressWarnings("unchecked")
-    public E getByProerties(String[] propName, Object[] propValue,
+    public <E> E getByProerties(Class<E> entityClass, String[] propName,
+            Object[] propValue,
             Map<String, String> sortedCondition) {
         if ((propName != null) && (propName.length > 0) && (propValue != null)
                 && (propValue.length > 0)
                 && (propValue.length == propName.length)) {
             // String的升级版，多用于sql语句的拼接
             StringBuffer sb = new StringBuffer("select o from "
-                    + this.entityClass.getName() + " o where 1=1 ");
+                    + entityClass.getName() + " o where 1=1 ");
             appendQL(sb, propName, propValue);
             if ((sortedCondition != null) && (sortedCondition.size() > 0)) {
                 sb.append(" order by ");
@@ -199,37 +208,41 @@ public class BaseDaoPhysic<E> implements Dao<E> {
     }
 
     @SuppressWarnings("unchecked")
-    public E get(Serializable id) {
+    public <E> E get(Class<E> entityClass, Serializable id) {
         return (E) getSession().get(entityClass, id);
     }
 
     @SuppressWarnings("unchecked")
-    public E load(Serializable id) {
-        return (E) getSession().load(this.entityClass, id);
+    public <E> E load(Class<E> entityClass, Serializable id) {
+        return (E) getSession().load(entityClass, id);
     }
 
-    public E getByProerties(String[] propName, Object[] propValue) {
-        return getByProerties(propName, propValue, null);
+    public <E> E getByProerties(Class<E> entityClass, String[] propName,
+            Object[] propValue) {
+        return getByProerties(entityClass, propName, propValue, null);
     }
 
-    public E getByProerties(String propName, Object propValue) {
-        return getByProerties(new String[] { propName },
+    public <E> E getByProerties(Class<E> entityClass, String propName,
+            Object propValue) {
+        return getByProerties(entityClass, new String[] { propName },
                 new Object[] { propValue });
     }
 
-    public E getByProerties(String propName, Object propValue,
+    public <E> E getByProerties(Class<E> entityClass, String propName,
+            Object propValue,
             Map<String, String> sortedCondition) {
-        return getByProerties(new String[] { propName },
+        return getByProerties(entityClass, new String[] { propName },
                 new Object[] { propValue }, sortedCondition);
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> queryByProerties(String[] propName, Object[] propValue,
+    public <E> List<E> queryByProerties(Class<E> entityClass,
+            String[] propName, Object[] propValue,
             Map<String, String> sortedCondition, Integer top) {
         if ((propName != null) && (propValue != null)
                 && (propValue.length == propName.length)) {
             StringBuffer sb = new StringBuffer("select o from "
-                    + this.entityClass.getName() + " o where 1=1 ");
+                    + entityClass.getName() + " o where 1=1 ");
             appendQL(sb, propName, propValue);
             if ((sortedCondition != null) && (sortedCondition.size() > 0)) {
                 sb.append(" order by ");
@@ -250,46 +263,52 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         return null;
     }
 
-    public List<E> queryByProerties(String[] propName, Object[] propValue,
+    public <E> List<E> queryByProerties(Class<E> entityClass,
+            String[] propName, Object[] propValue,
             Integer top) {
-        return queryByProerties(propName, propValue, null, top);
+        return queryByProerties(entityClass, propName, propValue, null, top);
     }
 
-    public List<E> queryByProerties(String[] propName, Object[] propValue,
+    public <E> List<E> queryByProerties(Class<E> entityClass,String[] propName, Object[] propValue,
             Map<String, String> sortedCondition) {
-        return queryByProerties(propName, propValue, sortedCondition, null);
+        return queryByProerties(entityClass, propName, propValue,
+                sortedCondition, null);
     }
 
-    public List<E> queryByProerties(String propName, Object propValue,
+    public <E> List<E> queryByProerties(Class<E> entityClass, String propName,
+            Object propValue,
             Map<String, String> sortedCondition, Integer top) {
-        return queryByProerties(new String[] { propName },
+        return queryByProerties(entityClass, new String[] { propName },
                 new Object[] { propValue }, sortedCondition, top);
     }
 
-    public List<E> queryByProerties(String propName, Object propValue,
-            Map<String, String> sortedCondition) {
-        return queryByProerties(new String[] { propName },
+    public <E> List<E> queryByProerties(Class<E> entityClass, String propName,
+            Object propValue, Map<String, String> sortedCondition) {
+        return queryByProerties(entityClass, new String[] { propName },
                 new Object[] { propValue }, sortedCondition, null);
     }
 
-    public List<E> queryByProerties(String propName, Object propValue,
+    public <E> List<E> queryByProerties(Class<E> entityClass, String propName,
+            Object propValue,
             Integer top) {
-        return queryByProerties(new String[] { propName },
+        return queryByProerties(entityClass, new String[] { propName },
                 new Object[] { propValue }, null, top);
     }
 
-    public List<E> queryByProerties(String[] propName, Object[] propValue) {
-        return queryByProerties(propName, propValue, null, null);
+    public <E> List<E> queryByProerties(Class<E> entityClass,
+            String[] propName, Object[] propValue) {
+        return queryByProerties(entityClass, propName, propValue, null, null);
     }
 
-    public List<E> queryByProerties(String propName, Object propValue) {
-        return queryByProerties(new String[] { propName },
+    public <E> List<E> queryByProerties(Class<E> entityClass, String propName,
+            Object propValue) {
+        return queryByProerties(entityClass, new String[] { propName },
                 new Object[] { propValue }, null, null);
     }
 
-    public Long countAll() {
+    public <E> Long countAll(Class<E> entityClass) {
         return (Long) getSession().createQuery(
-                "select count(*) from " + this.entityClass.getName())
+                "select count(*) from " + entityClass.getName())
                 .uniqueResult();
     }
 
@@ -297,13 +316,14 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         getSession().clear();
     }
 
-    public void evict(E entity) {
+    public <E> void evict(E entity) {
         getSession().evict(entity);
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> doQueryAll(Map<String, String> sortedCondition, Integer top) {
-        Criteria criteria = getSession().createCriteria(this.entityClass);
+    public <E> List<E> doQueryAll(Class<E> entityClass,
+            Map<String, String> sortedCondition, Integer top) {
+        Criteria criteria = getSession().createCriteria(entityClass);
         if ((sortedCondition != null) && (sortedCondition.size() > 0)) {
             for (Iterator<String> it = sortedCondition.keySet().iterator(); it
                     .hasNext();) {
@@ -322,20 +342,20 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         return criteria.list();
     }
 
-    public List<E> doQueryAll() {
-        return doQueryAll(null, null);
+    public <E> List<E> doQueryAll(Class<E> entityClass) {
+        return doQueryAll(entityClass, null, null);
     }
 
-    public List<E> doQueryAll(Integer top) {
-        return doQueryAll(null, top);
+    public <E> List<E> doQueryAll(Class<E> entityClass, Integer top) {
+        return doQueryAll(entityClass, null, top);
     }
 
-    public Long doCount(BaseParameter param) {
+    public <E> Long doCount(Class<E> entityClass, BaseParameter param) {
         if (param == null) {
             return null;
         }
-        Criteria criteria = getSession().createCriteria(this.entityClass);
-        processQuery(criteria, param);
+        Criteria criteria = getSession().createCriteria(entityClass);
+        processQuery(entityClass, criteria, param);
         try {
             criteria.setProjection(Projections.rowCount());
             return Long.valueOf(((Number) criteria.uniqueResult()).longValue());
@@ -346,12 +366,12 @@ public class BaseDaoPhysic<E> implements Dao<E> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> doQuery(BaseParameter param) {
+    public <E> List<E> doQuery(Class<E> entityClass, BaseParameter param) {
         if (param == null) {
             return null;
         }
-        Criteria criteria = getSession().createCriteria(this.entityClass);
-        processQuery(criteria, param);
+        Criteria criteria = getSession().createCriteria(entityClass);
+        processQuery(entityClass, criteria, param);
         try {
             if ((param.getSortedConditions() != null)
                     && (param.getSortedConditions().size() > 0)) {
@@ -373,20 +393,22 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         return null;
     }
 
-    public QueryResult<E> doPaginationQuery(BaseParameter param) {
-        return doPaginationQuery(param, true);
+    public <E> QueryResult<E> doPaginationQuery(Class<E> entityClass,
+            BaseParameter param) {
+        return doPaginationQuery(entityClass, param, true);
     }
 
     @SuppressWarnings("unchecked")
-    public QueryResult<E> doPaginationQuery(BaseParameter param, boolean bool) {
+    public <E> QueryResult<E> doPaginationQuery(Class<E> entityClass,
+            BaseParameter param, boolean bool) {
         if (param == null) {
             return null;
         }
-        Criteria criteria = getSession().createCriteria(this.entityClass);
+        Criteria criteria = getSession().createCriteria(entityClass);
         if (bool) {
-            processQuery(criteria, param);
+            processQuery(entityClass, criteria, param);
         } else {
-            extendprocessQuery(criteria, param);
+            extendprocessQuery(entityClass, criteria, param);
         }
         try {
             QueryResult<E> qr = new QueryResult<E>();
@@ -566,7 +588,8 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         return value.substring(value.indexOf('_', 1) + 1);
     }
 
-    private void processQuery(Criteria criteria, BaseParameter param) {
+    private <E> void processQuery(Class<E> entityClass, Criteria criteria,
+            BaseParameter param) {
         try {
             Map<String, Object> staticConditionMap = core.util.BeanUtils
                     .describeAvailableParameter(param);
@@ -625,7 +648,7 @@ public class BaseDaoPhysic<E> implements Dao<E> {
             }
             if ((dynamicConditionMap != null)
                     && (dynamicConditionMap.size() > 0)) {
-                Object bean = this.entityClass.newInstance();
+                Object bean = entityClass.newInstance();
                 Object map = new HashMap<Object, Object>();
                 for (Map.Entry<String, Object> e : dynamicConditionMap
                         .entrySet()) {
@@ -688,7 +711,8 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         }
     }
 
-    private void extendprocessQuery(Criteria criteria, BaseParameter param) {
+    private <E> void extendprocessQuery(Class<E> entityClass,
+            Criteria criteria, BaseParameter param) {
         try {
             Map<String, Object> staticConditionMap = core.util.BeanUtils
                     .describeAvailableParameter(param);
@@ -737,7 +761,7 @@ public class BaseDaoPhysic<E> implements Dao<E> {
             }
             if ((dynamicConditionMap != null)
                     && (dynamicConditionMap.size() > 0)) {
-                Object bean = this.entityClass.newInstance();
+                Object bean = entityClass.newInstance();
                 Object map = new HashMap<Object, Object>();
                 for (Map.Entry<String, Object> e : dynamicConditionMap
                         .entrySet()) {
@@ -794,8 +818,8 @@ public class BaseDaoPhysic<E> implements Dao<E> {
         }
     }
 
-    @Override
-    public List<E> queryByProertiesByPage(String[] propName,
+    public <E> List<E> queryByProertiesByPage(Class<E> entityClass,
+            String[] propName,
             Object[] propValue, Map<String, String> sortedCondition,
             Integer firstIndex, Integer count) {
         // TODO Auto-generated method stub
@@ -803,7 +827,8 @@ public class BaseDaoPhysic<E> implements Dao<E> {
     }
 
     @Override
-    public Pager<E> queryByProertiesPage(String[] propName, Object[] propValue,
+    public <E> Pager<E> queryByProertiesPage(Class<E> entityClass,
+            String[] propName, Object[] propValue,
             Map<String, String> sortedCondition, int pageNo, int pageSize) {
         // TODO Auto-generated method stub
         return null;
@@ -816,9 +841,9 @@ public class BaseDaoPhysic<E> implements Dao<E> {
      * @exception
      * @since 1.0.0
      */
-    public Long getMaxId() {
+    public <E> Long getMaxId(Class<E> entityClass) {
         StringBuffer sb = new StringBuffer("select max(id) from "
-                + this.entityClass.getName() + " o where 1=1 ");
+                + entityClass.getName() + " o where 1=1 ");
         String[] propName = { "isdelete" };
         Object[] propValue = { Byte.valueOf("0") };
         appendQL(sb, propName, propValue);
@@ -830,20 +855,23 @@ public class BaseDaoPhysic<E> implements Dao<E> {
     /**
      * 邹猛 doQueryByInMethods(这里用一句话描述这个方法的作用) 用in方法的查询
      * 
+     * @param <E>
+     * 
      * @param param
      * @return List<E>
      * @exception
      * @since 1.0.0
      */
-    public List<E> doQueryByInMethods(BaseParameter param) {
+    public <E> List<E> doQueryByInMethods(Class<E> entityClass,
+            BaseParameter param) {
         if (param == null) {
             return null;
         }
-        Criteria criteria = getSession().createCriteria(this.entityClass);
+        Criteria criteria = getSession().createCriteria(entityClass);
         Map<String, Object> propMap = param.getQueryDynamicConditions();
         propMap.put("$eq_isdelete", Byte.valueOf("0"));
         param.setQueryDynamicConditions(propMap);
-        extendprocessQuery(criteria, param);
+        extendprocessQuery(entityClass, criteria, param);
         try {
             if ((param.getSortedConditions() != null)
                     && (param.getSortedConditions().size() > 0)) {
@@ -1015,36 +1043,6 @@ public class BaseDaoPhysic<E> implements Dao<E> {
      * @exception
      * @since 1.0.0
      */
-    // public List executeQueryByPage(String count, String orderBy, String
-    // group,
-    // String[] propName, Object[] propValue, int pageNum, int PagesSize) {
-    // StringBuffer sb = new StringBuffer("select " + count + " from "
-    // + this.entityClass.getName() + " o where 1=1 ");
-    // String[] propNameNew = Arrays.copyOf(propName, propName.length + 1);
-    // propNameNew[propName.length] = "isdelete";
-    // Object[] propValueNew = Arrays.copyOf(propValue, propValue.length + 1);
-    // propValueNew[propValue.length] = BizStates.ISDELETE.NO;
-    // Query query = this.sessionFactory.getCurrentSession().createQuery(
-    // sb.toString());
-    // this.appendQL(sb, propNameNew, propValueNew);
-    // System.out.println("sqlwwwwwwwwwwwww************" + sb.toString());
-    // this.setParameter(query, propNameNew, propValueNew);
-    // System.out.println("sql************" + sb.toString());
-    // // 返回总记录数
-    // int pageCount = 0;
-    // try {
-    // pageCount = query.list().size();
-    // } catch (Exception e) {
-    // }
-    // // 体现分页
-    // List<?> f = query.setFirstResult((pageNum - 1) * PagesSize)
-    // .setMaxResults(PagesSize).list();
-    // List<Object> rs = New.arraylist();
-    // rs.add(pageCount);
-    // rs.add(f);
-    // return rs;
-    // }
-    // sql原生查询
     public void executeSql(String sql, Object[] parameters) {
         // TODO Auto-generated method stub
         Query query = this.sessionFactory.getCurrentSession().createSQLQuery(
