@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:mvc="http://www.springframework.org/schema/mvc"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-4.0.xsd
+				http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-4.0.xsd
+				http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-4.0.xsd
+				http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-4.0.xsd
+				http://www.springframework.org/schema/mvc classpath:/org/springframework/web/servlet/config/spring-mvc-4.0.xsd">
+
+	<mvc:annotation-driven/>
+	
+	<mvc:default-servlet-handler/>
+	
+	 <mvc:interceptors>
+        <!-- 使用bean定义一个Interceptor，直接定义在mvc:interceptors根下面的Interceptor将拦截所有的请求 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>            
+            <!-- 需排除拦截的地址 -->  
+            <mvc:exclude-mapping path="/" />
+            <mvc:exclude-mapping path="/test" />
+            <!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->
+            <bean class="com.huanke.sshshell.interceptor.TimeCostInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>            
+            <!-- 需排除拦截的地址 -->  
+            <mvc:exclude-mapping path="/*.jpg" />
+            <mvc:exclude-mapping path="/*.png" />
+            <mvc:exclude-mapping path="/*.gif" />
+            <mvc:exclude-mapping path="/*.js" />
+            <mvc:exclude-mapping path="/*.css" />
+            <mvc:exclude-mapping path="/test" />
+            <!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->
+            <bean class="com.huanke.sshshell.interceptor.CtxInterceptor"/>
+        </mvc:interceptor>
+        
+    </mvc:interceptors>
+        
+	<!--静态资源  -->
+	<!-- <mvc:resources location="/" mapping="/**"/>	 -->
+	<context:component-scan base-package="com.huanke" >
+	   <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	   <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+	</context:component-scan>
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/plain;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/plain;charset=UTF-8</value>
+							<value>application/json;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="viewResolverJstl" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+ 		<property name="viewClass">
+<!--  			<value>org.springframework.web.servlet.view.JstlView</value> -->
+ 			<value>com.huanke.sshshell.view.MyJstlView</value>
+ 		</property>
+ 		<property name="prefix"><value>/</value></property>
+ 		<property name="suffix"><value>.jsp</value></property>
+ 	</bean>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+	<!--上传下载  -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!--<property name="maxUploadSize" value="10485760"></property> -->
+	</bean> 
+	
+	    <!-- Freemarker配置 -->
+    <bean id="freemarkerConfig"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/page/" />
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="template_update_delay">0</prop>
+                <prop key="default_encoding">UTF-8</prop>
+                <prop key="number_format">0.##########</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="classic_compatible">true</prop>
+                <prop key="template_exception_handler">ignore</prop>
+            </props>
+        </property>
+    </bean>
+    
+        <!--视图解释器 -->
+    <bean id="viewResolverFtl"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="suffix">
+            <value>.html</value>
+        </property>
+        <property name="contentType" value="text/html;charset=UTF-8"></property>
+    </bean>
+</beans>

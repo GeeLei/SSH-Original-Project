@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-4.0.xsd
+				http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-4.0.xsd
+				http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-4.0.xsd
+				http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-4.0.xsd">
+
+	<!--引入quartz的定时任务 -->
+	<bean id="indexingInformationJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="informationServiceImpl" />
+		<property name="targetMethod" value="indexingInformation" />
+		<!--<property name="concurrent" value="false"/>拒绝quartz任务并发执行，并发或者死锁的问题-->
+	</bean>
+	<bean id="indexingInformationJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="indexingInformationJob" />
+		<property name="cronExpression" value="0 0 2 * * ?" />
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
+		<property name="triggers">
+			<list>
+				<ref bean="indexingInformationJobTrigger" />
+			</list>
+		</property>
+	</bean> 
+	</beans>
