@@ -50,7 +50,7 @@ public class TestController {
     @ResponseBody
     public void getByField() {
         Object[] result = testService.getFieldsByProperties(TestModel.class,
-                new String[] { "isDelete" }, new String[] { "id" },
+                new String[] { "id", "number" }, new String[] { "id" },
                 new Object[] { 2 }, null);
         System.out.println(JSONArray.fromObject(result));
     }

@@ -1055,4 +1055,168 @@ public class BaseDaoPhysic implements Dao {
         }
         query.executeUpdate();
     }
+
+    /*
+     * 获取对象属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition) {
+        if ((propName != null) && (propName.length > 0) && (propValue != null)
+                && (propValue.length > 0)
+                && (propValue.length == propName.length)) {
+            // String的升级版，多用于sql语句的拼接
+            StringBuffer sb = new StringBuffer("select ");
+            if (fields != null && fields.length > 0) {
+                for (int i = 0; i < fields.length; i++) {
+                    sb.append("o." + fields[i] + " , ");
+                }
+                sb.deleteCharAt(sb.lastIndexOf(","));
+                sb.append("from " + entityClass.getName() + " o where 1=1 ");
+                this.appendQL(sb, propName, propValue);
+                if ((sortedCondition != null) && (sortedCondition.size() > 0)) {
+                    sb.append(" order by ");
+                    for (Map.Entry<String, String> e : sortedCondition
+                            .entrySet()) {
+                        sb.append(e.getKey() + " " + e.getValue() + ",");
+                    }
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                Query query = this.getSession().createQuery(sb.toString());
+                this.setParameter(query, propName, propValue);
+                System.out.println("查询语句内容为：" + query.getQueryString());
+
+                List list = query.list();
+                if ((list != null) && (list.size() > 0)) {
+                    return (Object[]) list.get(0);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据属性名数组，排序条件获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition) {
+        return this.getFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue },
+                sortedCondition);
+    }
+
+    /**
+     * 根据属性名数组，获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue) {
+        return this.getFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue }, null);
+    }
+
+    /**
+     * 根据属性名数组，获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue) {
+        return this.getFieldsByProperties(entityClass, fields, propName,
+                propValue, null);
+    }
+
+    /*
+     * 获取对象属性列表
+     */
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition, Integer top) {
+        if ((propName != null) && (propName.length > 0) && (propValue != null)
+                && (propValue.length > 0)
+                && (propValue.length == propName.length)) {
+            // String的升级版，多用于sql语句的拼接
+            StringBuffer sb = new StringBuffer("select ");
+            if (fields != null && fields.length > 0) {
+                for (int i = 0; i < fields.length; i++) {
+                    sb.append("o." + fields[i] + " , ");
+                }
+                sb.deleteCharAt(sb.lastIndexOf(","));
+                sb.append("from " + entityClass.getName() + " o where 1=1 ");
+                this.appendQL(sb, propName, propValue);
+                if ((sortedCondition != null) && (sortedCondition.size() > 0)) {
+                    sb.append(" order by ");
+                    for (Map.Entry<String, String> e : sortedCondition
+                            .entrySet()) {
+                        sb.append(e.getKey() + " " + e.getValue() + ",");
+                    }
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                Query query = this.getSession().createQuery(sb.toString());
+                this.setParameter(query, propName, propValue);
+                if (top != null) {
+                    query.setFirstResult(0);
+                    query.setMaxResults(top.intValue());
+                }
+                List<Object[]> list = query.list();
+                return list;
+
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, null, null);
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition) {
+        return this.queryFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue },
+                sortedCondition, null);
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue) {
+        return this.queryFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue }, null,
+                null);
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue, Integer top) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, null, top);
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition, Integer top) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition, top);
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue, Integer top) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, null, top);
+    }
+
+    @Override
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition, null);
+    }
+
 }

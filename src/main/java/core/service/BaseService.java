@@ -344,6 +344,28 @@ public class BaseService implements Service {
                 propValue, null);
     }
 
+    /**
+     * 根据属性名数组获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名数组
+     * @param propValue
+     *            属性值数组
+     * @param top
+     *            返回数量
+     * 
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue, Integer top) {
+        return this.dao.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, top);
+    }
+
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue,
             Map<String, String> sortedCondition) {
@@ -354,7 +376,14 @@ public class BaseService implements Service {
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue) {
         return this.dao.queryFieldsByProperties(entityClass, fields, propName,
-                propValue, null);
+                propValue);
+    }
+
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition, Integer top) {
+        return this.dao.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition, top);
     }
 
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
@@ -368,8 +397,54 @@ public class BaseService implements Service {
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String propName, Object propValue) {
         return this.dao.queryFieldsByProperties(entityClass, fields,
-                new String[] { propName }, new Object[] { propValue }, null);
+                new String[] { propName }, new Object[] { propValue });
     }
-    
+
+    /**
+     * 根据属性名和排序条件获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param sortedCondition
+     *            排序条件
+     * @param top
+     *            返回数量
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition, Integer top) {
+        return this.dao.queryFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue },
+                sortedCondition, top);
+    }
+
+    /**
+     * 根据属性名获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param top
+     *            返回数量
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue, Integer top) {
+        return this.dao.queryFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue }, top);
+    }
+
 
 }

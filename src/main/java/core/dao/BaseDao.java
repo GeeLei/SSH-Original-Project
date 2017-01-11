@@ -1289,7 +1289,7 @@ public class BaseDao implements Dao {
      */
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue,
-            Map<String, String> sortedCondition) {
+            Map<String, String> sortedCondition, Integer top) {
         if ((propName != null) && (propName.length > 0) && (propValue != null)
                 && (propValue.length > 0)
                 && (propValue.length == propName.length)) {
@@ -1320,7 +1320,10 @@ public class BaseDao implements Dao {
                 }
                 Query query = this.getSession().createQuery(sb.toString());
                 this.setParameter(query, propName, propValue);
-                System.out.println("查询语句内容为：" + query.getQueryString());
+                if (top != null) {
+                    query.setFirstResult(0);
+                    query.setMaxResults(top.intValue());
+                }
                 List<Object[]> list = query.list();
                 return list;
 
@@ -1332,7 +1335,7 @@ public class BaseDao implements Dao {
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue) {
         return this.queryFieldsByProperties(entityClass, fields, propName,
-                propValue, null);
+                propValue, null, null);
     }
 
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
@@ -1340,12 +1343,87 @@ public class BaseDao implements Dao {
             Map<String, String> sortedCondition) {
         return this.queryFieldsByProperties(entityClass, fields,
                 new String[] { propName }, new Object[] { propValue },
-                sortedCondition);
+                sortedCondition, null);
     }
 
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String propName, Object propValue) {
         return this.queryFieldsByProperties(entityClass, fields,
-                new String[] { propName }, new Object[] { propValue }, null);
+                new String[] { propName }, new Object[] { propValue }, null,
+                null);
+    }
+
+    /**
+     * 根据属性名数组获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名数组
+     * @param propValue
+     *            属性值数组
+     * @param top
+     *            返回数量
+     * 
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue, Integer top) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, null, top);
+    }
+
+    /**
+     * 根据属性名和排序条件获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param sortedCondition
+     *            排序条件
+     * @param top
+     *            返回数量
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition, Integer top) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition, top);
+    }
+
+    /**
+     * 根据属性名获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param top
+     *            返回数量
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue, Integer top) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, null, top);
+    }
+
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition) {
+        return this.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition, null);
     }
 }

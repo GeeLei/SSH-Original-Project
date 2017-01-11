@@ -509,39 +509,89 @@ public interface Service {
             String entities);
 
     /**
-     * 根据属性名数组，排序条件获取指定多个属性
+     * 根据属性名数组，排序条件获取指定元素
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名数组
+     * @param propValue
+     *            属性值数组
+     * @param sortedCondition
+     *            排序条件
+     * @return
      */
     public <E> Object[] getFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue,
             Map<String, String> sortedCondition);
 
     /**
-     * 根据属性名数组，排序条件获取指定多个属性
+     * 根据属性名，排序条件获取指定多个属性
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param sortedCondition
+     *            排序条件
+     * @return Object[]
+     * 
      */
     public <E> Object[] getFieldsByProperties(Class<E> entityClass,
             String[] fields, String propName, Object propValue,
             Map<String, String> sortedCondition);
 
     /**
-     * 根据属性名数组，获取指定多个属性
+     * 根据属性名，获取指定多个属性
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @return
      */
     public <E> Object[] getFieldsByProperties(Class<E> entityClass,
             String[] fields, String propName, Object propValue);
 
     /**
      * 根据属性名数组，获取指定多个属性
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名数组
+     * @param propValue
+     *            属性值数组
+     * @return
      */
     public <E> Object[] getFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue);
 
     /**
-     * 根据属性数组和排序条件获取多个属性
+     * 根据属性名数组和排序条件获取多个属性列表
      * 
      * @param entityClass
+     *            对象类型
      * @param fields
+     *            查找元素数组
      * @param propName
+     *            属性名数组
      * @param propValue
+     *            属性值数组
      * @param sortedCondition
+     *            排序条件
      * @return
      */
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
@@ -549,25 +599,35 @@ public interface Service {
             Map<String, String> sortedCondition);
 
     /**
-     * 根据属性数组获取多个属性
+     * 根据属性名数组获取多个属性列表
      * 
      * @param entityClass
+     *            对象类型
      * @param fields
+     *            查找元素数组
      * @param propName
+     *            属性名数组
      * @param propValue
+     *            属性值数组
+     * 
      * @return
      */
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String[] propName, Object[] propValue);
 
     /**
-     * 根据属性和排序条件获取多个属性
+     * 根据属性名和排序条件获取多个属性列表
      * 
      * @param entityClass
+     *            对象类型
      * @param fields
+     *            查找元素数组
      * @param propName
+     *            属性名
      * @param propValue
+     *            属性值
      * @param sortedCondition
+     *            排序条件
      * @return
      */
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
@@ -575,14 +635,98 @@ public interface Service {
             Map<String, String> sortedCondition);
 
     /**
-     * 根据属性获取多个属性
+     * 根据属性名获取多个属性列表
      * 
      * @param entityClass
+     *            对象类型
      * @param fields
+     *            查找元素数组
      * @param propName
+     *            属性名
      * @param propValue
+     *            属性值
      * @return
      */
     public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
             String[] fields, String propName, Object propValue);
+
+    /**
+     * 根据属性名数组和排序条件获取指定数量的多个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名数组
+     * @param propValue
+     *            属性值数组
+     * @param sortedCondition
+     *            排序条件
+     * @param top
+     *            返回数量
+     * 
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition, Integer top);
+
+    /**
+     * 根据属性名数组获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名数组
+     * @param propValue
+     *            属性值数组
+     * @param top
+     *            返回数量
+     * 
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue, Integer top);
+
+    /**
+     * 根据属性名和排序条件获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param sortedCondition
+     *            排序条件
+     * @param top
+     *            返回数量
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition, Integer top);
+
+    /**
+     * 根据属性名获取指定数量个属性列表
+     * 
+     * @param entityClass
+     *            对象类型
+     * @param fields
+     *            查找元素数组
+     * @param propName
+     *            属性名
+     * @param propValue
+     *            属性值
+     * @param top
+     *            返回数量
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue, Integer top);
 }
