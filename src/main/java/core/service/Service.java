@@ -507,4 +507,82 @@ public interface Service {
 
     public <E> void deleteByEntities(String[] propName, Object[] propValue,
             String entities);
+
+    /**
+     * 根据属性名数组，排序条件获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition);
+
+    /**
+     * 根据属性名数组，排序条件获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition);
+
+    /**
+     * 根据属性名数组，获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue);
+
+    /**
+     * 根据属性名数组，获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue);
+
+    /**
+     * 根据属性数组和排序条件获取多个属性
+     * 
+     * @param entityClass
+     * @param fields
+     * @param propName
+     * @param propValue
+     * @param sortedCondition
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition);
+
+    /**
+     * 根据属性数组获取多个属性
+     * 
+     * @param entityClass
+     * @param fields
+     * @param propName
+     * @param propValue
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue);
+
+    /**
+     * 根据属性和排序条件获取多个属性
+     * 
+     * @param entityClass
+     * @param fields
+     * @param propName
+     * @param propValue
+     * @param sortedCondition
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition);
+
+    /**
+     * 根据属性获取多个属性
+     * 
+     * @param entityClass
+     * @param fields
+     * @param propName
+     * @param propValue
+     * @return
+     */
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue);
 }

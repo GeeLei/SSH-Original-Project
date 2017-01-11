@@ -304,4 +304,72 @@ public class BaseService implements Service {
         return null;
     }
 
+    /**
+     * 根据属性名数组，排序条件获取指定元素
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields,
+            String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition) {
+        return this.dao.getFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition);
+    }
+
+    /**
+     * 根据属性名数组，排序条件获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition) {
+        return this.dao.getFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue },
+                sortedCondition);
+    }
+
+    /**
+     * 根据属性名数组，获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue) {
+        return this.dao.getFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue }, null);
+    }
+
+    /**
+     * 根据属性名数组，获取指定多个属性
+     */
+    public <E> Object[] getFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue) {
+        return this.dao.getFieldsByProperties(entityClass, fields, propName,
+                propValue, null);
+    }
+
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue,
+            Map<String, String> sortedCondition) {
+        return this.dao.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, sortedCondition);
+    }
+
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String[] propName, Object[] propValue) {
+        return this.dao.queryFieldsByProperties(entityClass, fields, propName,
+                propValue, null);
+    }
+
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue,
+            Map<String, String> sortedCondition) {
+        return this.dao.queryFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue },
+                sortedCondition);
+    }
+
+    public <E> List<Object[]> queryFieldsByProperties(Class<E> entityClass,
+            String[] fields, String propName, Object propValue) {
+        return this.dao.queryFieldsByProperties(entityClass, fields,
+                new String[] { propName }, new Object[] { propValue }, null);
+    }
+    
+
 }
