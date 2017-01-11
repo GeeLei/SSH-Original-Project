@@ -14,6 +14,7 @@ public class TestModel {
 
     private Integer id;
     private Integer number;
+    private Byte isDelete;
 
     @GenericGenerator(name = "generator", strategy = "increment")
     @Id
@@ -27,13 +28,22 @@ public class TestModel {
         this.id = id;
     }
 
-    @Column(name = "NUMBER", unique = true, nullable = false)
+    @Column(name = "NUMBER", nullable = false)
     public Integer getNumber() {
         return number;
     }
 
     public void setNumber(Integer number) {
         this.number = number;
+    }
+
+    @Column(name = "IS_DELETE", nullable = false)
+    public Byte getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Byte isDelete) {
+        this.isDelete = isDelete;
     }
 
 }

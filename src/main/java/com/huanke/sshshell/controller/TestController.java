@@ -28,4 +28,18 @@ public class TestController {
         return json;
     }
 
+    @RequestMapping("test")
+    @ResponseBody
+    public String test() {
+        return "ok";
+    }
+
+    @RequestMapping("query")
+    @ResponseBody
+    public AjaxJson queryAll() {
+        AjaxJson json = new AjaxJson();
+        json.setObj(testService.doQueryAll(TestModel.class));
+        return json;
+    }
+
 }

@@ -5,6 +5,8 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +19,7 @@ import core.dao.Dao;
 import core.support.BaseParameter;
 import core.support.QueryResult;
 
+
 @Service
 @Transactional
 public class BaseService implements Service {
@@ -24,12 +27,12 @@ public class BaseService implements Service {
     protected final Logger log = Logger.getLogger(BaseService.class);
 
 
-    public Dao dao = new BaseDao();
+    public Dao dao;
 
-    // @Resource
-    // public void setDao(BaseDao baseDao) {
-    // this.dao = baseDao;
-    // }
+    @Resource
+    public void setDao(BaseDao baseDao) {
+        this.dao = baseDao;
+    }
 
     public <E> Serializable persist(E entity) {
         return this.dao.persist(entity);

@@ -36,10 +36,6 @@ import com.huanke.sshshell.bean.Pager;
 import core.support.BaseParameter;
 import core.support.QueryResult;
 
-/**
- * 类名称：BaseDaoPhysic，物理删除basedao 类描述： 创建人： 吴瑜 创建时间：2015年5月2日 下午4:33:02 修改人：
- * 修改时间：2015年5月2日 下午4:33:02 修改备注：
- */
 public class BaseDaoPhysic implements Dao {
     protected final Logger log = Logger.getLogger(BaseDaoPhysic.class);
     private static Map<String, Method> MAP_METHOD = new HashMap<String, Method>();

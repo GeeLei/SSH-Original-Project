@@ -14,7 +14,7 @@ public class CheckController {
     @RequestMapping("/he")
     @ResponseBody
     public Object test() {
-        return ResultUtils.success("You get it");
+        return ResultUtils.success("You get it new");
     }
 
 }

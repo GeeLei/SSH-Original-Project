@@ -39,21 +39,11 @@ import com.huanke.sshshell.constant.BizStates;
 import core.support.BaseParameter;
 import core.support.QueryResult;
 
-/**
- * 类名称：BaseDao，逻辑删除basedao 类描述： 创建人： 吴瑜 创建时间：2015年5月2日 下午4:33:28 修改人：
- * 修改时间：2015年5月2日 下午4:33:28 修改备注：
- */
 @Repository
 public class BaseDao implements Dao {
     private static Map<String, Method> MAP_METHOD = new HashMap<String, Method>();
     protected final Logger log = Logger.getLogger(BaseDao.class);
     private SessionFactory sessionFactory;
-
-    // protected Class<E> entityClass;
-
-    // public BaseDao(Class<E> entityClass) {
-    // this.entityClass = entityClass;
-    // }
 
     private void appendQL(StringBuffer sb, String[] propName, Object[] propValue) {
         // 遍历，取参数
@@ -100,7 +90,7 @@ public class BaseDao implements Dao {
     public <E> Long countAll(Class<E> entityClass) {
         StringBuffer sb = new StringBuffer("select count(*) from "
                 + entityClass.getName() + " o where 1=1 ");
-        String[] propName = { "isdelete" };
+        String[] propName = { "isDelete" };
         Object[] propValue = { Byte.valueOf("0") };
         this.appendQL(sb, propName, propValue);
         Query query = this.getSession().createQuery(sb.toString());
@@ -112,7 +102,7 @@ public class BaseDao implements Dao {
     public <E> void delete(E entity) {
         if (entity != null) {
             try {
-                BeanUtils.setProperty(entity, "isdelete", Byte.valueOf("1"));
+                BeanUtils.setProperty(entity, "isDelete", Byte.valueOf("1"));
                 this.update(entity);
             } catch (Exception e) {
                 this.log.error(e.getMessage(), e);
@@ -128,7 +118,7 @@ public class BaseDao implements Dao {
                 E entity = this.get(entityClass, element);
                 if (entity != null) {
                     try {
-                        BeanUtils.setProperty(entity, "isdelete",
+                        BeanUtils.setProperty(entity, "isDelete",
                                 Byte.valueOf("1"));
                         this.update(entity);
                     } catch (Exception e) {
@@ -152,7 +142,7 @@ public class BaseDao implements Dao {
     @Override
     public <E> void deleteByProperties(Class<E> entityClass,
             String[] conditionName, Object[] conditionValue) {
-        String propertyName = "isdelete";
+        String propertyName = "isDelete";
         Object propertyValue = Byte.valueOf("1");
         this.updateByProperties(entityClass, conditionName, conditionValue,
                 propertyName,
@@ -165,7 +155,7 @@ public class BaseDao implements Dao {
         }
         Criteria criteria = this.getSession().createCriteria(entityClass);
         Map<String, Object> propMap = param.getQueryDynamicConditions();
-        propMap.put("$eq_isdelete", Byte.valueOf("0"));
+        propMap.put("$eq_isdDelete", Byte.valueOf("0"));
         param.setQueryDynamicConditions(propMap);
         // this.processQuery(criteria, param);
         this.extendprocessQuery(entityClass, criteria, param);
@@ -191,7 +181,7 @@ public class BaseDao implements Dao {
         }
         Criteria criteria = this.getSession().createCriteria(entityClass);
         Map<String, Object> propMap = param.getQueryDynamicConditions();
-        propMap.put("$eq_isdelete", Byte.valueOf("0"));
+        propMap.put("$eq_isDelete", Byte.valueOf("0"));
         param.setQueryDynamicConditions(propMap);
         if (bool) {
             this.processQuery(criteria, param);
@@ -236,7 +226,7 @@ public class BaseDao implements Dao {
         }
         Criteria criteria = this.getSession().createCriteria(entityClass);
         Map<String, Object> propMap = param.getQueryDynamicConditions();
-        propMap.put("$eq_isdelete", Byte.valueOf("0"));
+        propMap.put("$eq_isDelete", Byte.valueOf("0"));
         param.setQueryDynamicConditions(propMap);
         this.processQuery(criteria, param);
         try {
@@ -275,7 +265,7 @@ public class BaseDao implements Dao {
         Criteria criteria = this.getSession().createCriteria(entityClass);
         BaseParameter param = new BaseParameter();
         Map<String, Object> propMap = new HashMap<String, Object>();
-        propMap.put("$eq_isdelete", Byte.valueOf("0"));
+        propMap.put("$eq_isDelete", Byte.valueOf("0"));
         param.setQueryDynamicConditions(propMap);
         this.processQuery(criteria, param);
         if ((sortedCondition != null) && (sortedCondition.size() > 0)) {
@@ -312,7 +302,7 @@ public class BaseDao implements Dao {
         }
         Criteria criteria = this.getSession().createCriteria(entityClass);
         Map<String, Object> propMap = param.getQueryDynamicConditions();
-        propMap.put("$eq_isdelete", Byte.valueOf("0"));
+        propMap.put("$eq_isDelete", Byte.valueOf("0"));
         param.setQueryDynamicConditions(propMap);
         this.extendprocessQuery(entityClass, criteria, param);
         try {
@@ -483,7 +473,7 @@ public class BaseDao implements Dao {
             StringBuffer sb = new StringBuffer("select o from "
                     + entityClass.getName() + " o where 1=1 ");
             String[] propNameNew = Arrays.copyOf(propName, propName.length + 1);
-            propNameNew[propName.length] = "isdelete";
+            propNameNew[propName.length] = "isDelete";
             propName = propNameNew;
             Object[] propValueNew = Arrays.copyOf(propValue,
                     propValue.length + 1);
@@ -542,7 +532,7 @@ public class BaseDao implements Dao {
     public <E> Long getMaxId(Class<E> entityClass) {
         StringBuffer sb = new StringBuffer("select max(id) from "
                 + entityClass.getName() + " o where 1=1 ");
-        String[] propName = { "isdelete" };
+        String[] propName = { "isDelete" };
         Object[] propValue = { Byte.valueOf("0") };
         this.appendQL(sb, propName, propValue);
         Query query = this.getSession().createQuery(sb.toString());
@@ -644,7 +634,7 @@ public class BaseDao implements Dao {
     public <E> Serializable persist(E entity) {
         if (entity != null) {
             try {
-                BeanUtils.setProperty(entity, "isdelete", Byte.valueOf("0"));
+                BeanUtils.setProperty(entity, "isDelete", Byte.valueOf("0"));
             } catch (Exception e) {
             }
         }
@@ -843,7 +833,7 @@ public class BaseDao implements Dao {
             StringBuffer sb = new StringBuffer("select o from "
                     + entityClass.getName() + " o where 1=1 ");
             String[] propNameNew = Arrays.copyOf(propName, propName.length + 1);
-            propNameNew[propName.length] = "isdelete";
+            propNameNew[propName.length] = "isDelete";
             propName = propNameNew;
             Object[] propValueNew = Arrays.copyOf(propValue,
                     propValue.length + 1);
@@ -879,7 +869,7 @@ public class BaseDao implements Dao {
             StringBuffer sb = new StringBuffer("select o from "
                     + entityClass.getName() + " o where 1=1 ");
             String[] propNameNew = Arrays.copyOf(propName, propName.length + 1);
-            propNameNew[propName.length] = "isdelete";
+            propNameNew[propName.length] = "isDelete";
             propName = propNameNew;
             Object[] propValueNew = Arrays.copyOf(propValue,
                     propValue.length + 1);
@@ -922,7 +912,7 @@ public class BaseDao implements Dao {
             pager.setPageSize(pageSize);
 
             String[] propNameNew = Arrays.copyOf(propName, propName.length + 1);
-            propNameNew[propName.length] = "isdelete";
+            propNameNew[propName.length] = "isDelete";
             propName = propNameNew;
             Object[] propValueNew = Arrays.copyOf(propValue,
                     propValue.length + 1);
@@ -1057,7 +1047,7 @@ public class BaseDao implements Dao {
             sb.append(" where 1=1 ");
             String[] conditionNameNew = Arrays.copyOf(conditionName,
                     conditionName.length + 1);
-            conditionNameNew[conditionName.length] = "isdelete";
+            conditionNameNew[conditionName.length] = "isDelete";
             conditionName = conditionNameNew;
             Object[] conditionValueNew = Arrays.copyOf(conditionValue,
                     conditionValue.length + 1);
