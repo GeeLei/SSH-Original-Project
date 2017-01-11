@@ -462,6 +462,7 @@ public class BaseDao implements Dao {
         return this.getByProerties(entityClass, propName, propValue, null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <E> E getByProerties(Class<E> entityClass, String[] propName,
             Object[] propValue, Map<String, String> sortedCondition) {
@@ -488,10 +489,8 @@ public class BaseDao implements Dao {
             }
             Query query = this.getSession().createQuery(sb.toString());
             this.setParameter(query, propName, propValue);
-            List<E> list = query.list();
-            if ((list != null) && (list.size() > 0)) {
-                return list.get(0);
-            }
+            return (E) query.uniqueResult();
+
         }
         return null;
     }
@@ -1247,10 +1246,7 @@ public class BaseDao implements Dao {
                 this.setParameter(query, propName, propValue);
                 System.out.println("查询语句内容为：" + query.getQueryString());
 
-                List list = query.list();
-                if ((list != null) && (list.size() > 0)) {
-                    return (Object[]) list.get(0);
-                }
+                return (Object[]) query.uniqueResult();
             }
         }
         return null;
